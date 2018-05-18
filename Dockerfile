@@ -5,22 +5,22 @@ MAINTAINER Alto <alto@pendragon.kr>
 
 
 # Select servers
-ENV SERVER_NAMES="cloudflare, google"
+ENV SERVER_NAMES="cloudflare, google" \
 
-# Enable & Disable protocols
-ENV PROTO_DNSCRYPT="true"
-ENV PROTO_DOH="true"
+    # Enable & Disable protocols
+    PROTO_DNSCRYPT="true" \
+    PROTO_DOH="true" \
 
-# Check ( DNSSEC & No-logging & No-filter ) option of dns-resolver
-ENV REQUIRE_DNSSEC="false"
-ENV REQUIRE_NOLOG="true"
-ENV REQUIRE_NOFILTER="true"
+    # Check ( DNSSEC & No-logging & No-filter ) option of dns-resolver
+    REQUIRE_DNSSEC="false" \
+    REQUIRE_NOLOG="true" \
+    REQUIRE_NOFILTER="true" \
 
-# Fallback DNS server
-ENV FALLBACK_RESOLVER=1.1.1.1:53
+    # Fallback DNS server
+    FALLBACK_RESOLVER=1.1.1.1:53 \
 
-# Default nothing to build latest version.
-ENV VERSION=''
+    # Default nothing to build latest version.
+    VERSION='' \
 
 COPY /rootfs /
 
