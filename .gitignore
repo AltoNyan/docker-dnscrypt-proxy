@@ -11,4 +11,4 @@ gen
 # Custom.
 .BACKUP
 build
-/.gitignore
+.gitignore
