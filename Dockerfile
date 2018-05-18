@@ -1,7 +1,8 @@
-MAINTAINER Alto <alto@pendragon.kr>
-
 # Smallest base image
 FROM alpine:latest
+
+MAINTAINER Alto <alto@pendragon.kr>
+
 
 # Select servers
 ENV SERVER_NAMES="cloudflare, google"
