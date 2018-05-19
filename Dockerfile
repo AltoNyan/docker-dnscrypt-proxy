@@ -4,7 +4,7 @@ FROM alpine:latest
 MAINTAINER Alto <alto@pendragon.kr>
 
 
-# Select servers
+    # Select servers
 ENV SERVER_NAMES="cloudflare, google" \
 
     # Enable & Disable protocols
@@ -19,7 +19,7 @@ ENV SERVER_NAMES="cloudflare, google" \
     # Fallback DNS server
     FALLBACK_RESOLVER=1.1.1.1:53 \
 
-    # Default nothing to build latest version.
+    # Default empty-string to build latest version.
     VERSION=''
 
 COPY /rootfs /
