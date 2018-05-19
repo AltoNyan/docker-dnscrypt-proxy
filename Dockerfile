@@ -20,7 +20,7 @@ ENV SERVER_NAMES="cloudflare, google" \
     FALLBACK_RESOLVER=1.1.1.1:53 \
 
     # Default nothing to build latest version.
-    VERSION='' \
+    VERSION=''
 
 COPY /rootfs /
 
