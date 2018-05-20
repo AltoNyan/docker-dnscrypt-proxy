@@ -21,7 +21,7 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 
 
 # Next Step
->### Pull from docker-hub with custom environment variable setting:
+>### Run with custom environment variables:
 >     docker run -d -p 0.0.0.0:53:53/udp \
 >                   -p 0.0.0.0:53:53/tcp \ 
 >                   -e "SERVER_NAMES=cloudflare, google" \
