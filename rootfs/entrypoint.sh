@@ -49,7 +49,7 @@ if [ -e $CONFIG_ORIGINAL ]; then
 
     change_config 'fallback_resolver' "'${FALLBACK_RESOLVER}'"
 
-    change_config 'listen_addresses' "'127.0.0.1:53'"
+    change_config 'listen_addresses' "'0.0.0.0:53'"
 
 else
     echo "File not exist!! <$CONFIG_ORIGINAL>"

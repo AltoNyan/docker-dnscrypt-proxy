@@ -3,7 +3,6 @@ FROM alpine:latest
 
 MAINTAINER Alto <alto@pendragon.kr>
 
-
     # Select servers
 ENV SERVER_NAMES="cloudflare, google" \
 
@@ -63,6 +62,6 @@ RUN set -ex \
 
 WORKDIR /app
 
-EXPOSE 53
+EXPOSE 53/tcp 53/udp
 
 ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
