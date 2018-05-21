@@ -18,7 +18,7 @@ change_config (){
         # change line from file
         if [[ $counter -eq 1 ]]; then
             # key =  value
-            sed -i -r "s/^[# ]*${1} ?=[^[\]]*$/${1} = ${2}/" $CONFIG_FILE
+            sed -i -r "s/^[# ]*${1} ?= ?[^[]*$/${1} = ${2}/" $CONFIG_FILE
 
             # key = [value]
             sed -i -r "s/^[# ]*${1} ?= ?\[.*$/${1} = \[${2}\]/" $CONFIG_FILE
