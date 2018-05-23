@@ -21,11 +21,11 @@ ENV SERVER_NAMES='cloudflare, google' \
     # Listen addresses
     LISTEN_ADDRESSES=0.0.0.0:53\
 
-    # Default empty-string to build latest version.
-    VERSION='' \
-
     # Disable auto-regenerate config file on boot.
-    ENABLE_AUTO_CONFIG='true'
+    ENABLE_AUTO_CONFIG='true' \
+
+    # Default empty-string to build latest version.
+    VERSION=''
 
 COPY /rootfs /
 
