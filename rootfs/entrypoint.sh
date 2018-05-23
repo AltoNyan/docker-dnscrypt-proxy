@@ -30,27 +30,32 @@ change_config (){
     fi
 }
 
-# change config.
+# check example-config file exist
 if [ -e $CONFIG_ORIGINAL ]; then
 
-    cp $CONFIG_ORIGINAL $CONFIG_FILE
+    # config file not exist or auto regeneration not off
+    if [ $ENABLE_AUTO_CONFIG == 'true' ] || [ ! -e $CONFIG_FILE ]; then
 
-    change_config 'server_names' "${SERVER_NAMES}"
+        cp $CONFIG_ORIGINAL $CONFIG_FILE
 
-    change_config 'dnscrypt_servers' "${PROTO_DNSCRYPT}"
+        change_config 'server_names' "${SERVER_NAMES}"
 
-    change_config 'doh_servers' "${PROTO_DOH}"
+        change_config 'dnscrypt_servers' "${PROTO_DNSCRYPT}"
 
-    change_config 'require_dnssec' "${REQUIRE_DNSSEC}"
+        change_config 'doh_servers' "${PROTO_DOH}"
 
-    change_config 'require_nolog' "${REQUIRE_NOLOG}"
+        change_config 'require_dnssec' "${REQUIRE_DNSSEC}"
 
-    change_config 'require_nofilter' "${REQUIRE_NOFILTER}"
+        change_config 'require_nolog' "${REQUIRE_NOLOG}"
 
-    change_config 'fallback_resolver' "'${FALLBACK_RESOLVER}'"
+        change_config 'require_nofilter' "${REQUIRE_NOFILTER}"
 
-    change_config 'listen_addresses' "${LISTEN_ADDRESSES}"
+        change_config 'fallback_resolver' "'${FALLBACK_RESOLVER}'"
 
+        change_config 'listen_addresses' "${LISTEN_ADDRESSES}"
+    else
+        echo "Config auto regeneration on boot disabled."
+    fi
 else
     echo "File not exist!! <$CONFIG_ORIGINAL>"
 fi
