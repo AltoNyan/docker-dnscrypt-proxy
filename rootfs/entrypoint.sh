@@ -17,11 +17,11 @@ change_config (){
 
         # change line from file
         if [[ $counter -eq 1 ]]; then
-            # key =  value
+            # key = value
             sed -i -r "s/^[# ]*${1} ?= ?[^[]*$/${1} = ${2}/" $CONFIG_FILE
 
             # key = [value]
-            sed -i -r "s/^[# ]*${1} ?= ?\[.*$/${1} = \[${2}\]/" $CONFIG_FILE
+            sed -i -r "s/^[# ]*${1} ?= ?\[.*$/${1} = \['${2}'\]/" $CONFIG_FILE
         else
             # key = [value1, value2, ...]
             sed -i -r "s/^[# ]*${1} ?=.*$/${1} = [${VAR%?}]/" $CONFIG_FILE
@@ -49,7 +49,7 @@ if [ -e $CONFIG_ORIGINAL ]; then
 
     change_config 'fallback_resolver' "'${FALLBACK_RESOLVER}'"
 
-    change_config 'listen_addresses' "'0.0.0.0:53'"
+    change_config 'listen_addresses' "${LISTEN_ADDRESSES}"
 
 else
     echo "File not exist!! <$CONFIG_ORIGINAL>"

@@ -4,19 +4,22 @@ FROM alpine:latest
 MAINTAINER Alto <alto@pendragon.kr>
 
     # Select servers
-ENV SERVER_NAMES="cloudflare, google" \
+ENV SERVER_NAMES='cloudflare, google' \
 
     # Enable & Disable protocols
-    PROTO_DNSCRYPT="true" \
-    PROTO_DOH="true" \
+    PROTO_DNSCRYPT='true' \
+    PROTO_DOH='true' \
 
     # Check ( DNSSEC & No-logging & No-filter ) option of dns-resolver
-    REQUIRE_DNSSEC="false" \
-    REQUIRE_NOLOG="true" \
-    REQUIRE_NOFILTER="true" \
+    REQUIRE_DNSSEC='false' \
+    REQUIRE_NOLOG='true' \
+    REQUIRE_NOFILTER='true' \
 
     # Fallback DNS server
     FALLBACK_RESOLVER=1.1.1.1:53 \
+
+    # Listen addresses
+    LISTEN_ADDRESSES=0.0.0.0:53\
 
     # Default empty-string to build latest version.
     VERSION=''
