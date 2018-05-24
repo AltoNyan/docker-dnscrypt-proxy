@@ -21,10 +21,15 @@ ENV SERVER_NAMES='cloudflare, google' \
     # Listen addresses
     LISTEN_ADDRESSES=0.0.0.0:53\
 
+    # Disable auto-regenerate config file on boot.
+    ENABLE_AUTO_CONFIG='true' \
+
     # Default empty-string to build latest version.
     VERSION=''
 
 COPY /rootfs /
+
+VOLUME /data
 
 RUN set -ex \
     && apk --no-cache --no-progress --update upgrade \
