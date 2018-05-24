@@ -29,6 +29,8 @@ ENV SERVER_NAMES='cloudflare, google' \
 
 COPY /rootfs /
 
+VOLUME /data
+
 RUN set -ex \
     && apk --no-cache --no-progress --update upgrade \
     && apk --no-cache --no-progress add tini ca-certificates\
