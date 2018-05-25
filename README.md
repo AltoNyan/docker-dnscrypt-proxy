@@ -38,7 +38,7 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 
 
 ## Environment Variables
-| Variable Name | Default-Value | Descriptions |
+| Variable Name | Default Value | Descriptions |
 |:--------------|:-------------:|:-------------|
 | SERVER_NAMES      | cloudflare, google    | You can choose servers from [public-resolvers](https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v2/public-resolvers.md). |
 | PROTO_DNSCRYPT    | true                  | Enable using DNSCRYPT servers. |
