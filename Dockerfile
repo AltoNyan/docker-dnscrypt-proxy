@@ -3,6 +3,8 @@ FROM alpine:latest
 
 MAINTAINER Alto <alto@pendragon.kr>
 
+ARG VERSION
+
     # Select servers
 ENV SERVER_NAMES='cloudflare, google' \
 
@@ -24,8 +26,8 @@ ENV SERVER_NAMES='cloudflare, google' \
     # Disable auto-regenerate config file on boot.
     ENABLE_AUTO_CONFIG='true' \
 
-    # Default empty-string to build latest version.
-    VERSION=''
+    # Default nothing to build latest version.
+    VERSION=${VERSION}
 
 COPY /rootfs /
 

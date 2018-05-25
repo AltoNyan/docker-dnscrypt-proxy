@@ -12,8 +12,12 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 ### or
 
 >### Build your own image:
->     docker build -t dnscrypt-proxy .
->##### Start the container:
+>>##### - Default
+>>     docker build -t dnscrypt-proxy .
+>>##### - Custom Version ([DNSCrypt-Proxy](https://github.com/jedisct1/dnscrypt-proxy))
+>>     docker build --build-arg VERSION='2.x.xx' \
+>>                  -t dnscrypt-proxy .
+>### Next. Start the container:
 >     docker run -d -p 0.0.0.0:53:53/udp \
 >                   -p 0.0.0.0:53:53/tcp \ 
 >                   dnscrypt-proxy
@@ -24,8 +28,8 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 >### Run with custom environment variables:
 >     docker run -d -p 0.0.0.0:53:53/udp \
 >                   -p 0.0.0.0:53:53/tcp \ 
->                   -e "SERVER_NAMES=cloudflare, google" \
->                   -e "(Other-Env-Variables)=parameter"
+>                   -e 'SERVER_NAMES=cloudflare, google' \
+>                   -e 'FALLBACK_RESOLVER=1.1.1.1:53'
 >
 >                   ...
 >
@@ -34,28 +38,15 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 
 
 ## Environment Variables
->#### SERVER_NAMES =' cloudflare, google, ... '
->You can choose servers from [public-resolvers](https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v2/public-resolvers.md).
+| Variable Name | Default Value | Descriptions |
+|:--------------|:-------------:|:------------|
+| SERVER_NAMES      | cloudflare, google    | You can choose servers from [public-resolvers](https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v2/public-resolvers.md). |
+| PROTO_DNSCRYPT    | true                  | Enable using DNSCRYPT servers. |
+| PROTO_DOH         | true                  | Enable using DNS-over-HTTPS servers. |
+| REQUIRE_DNSSEC    | false                 | Require DNSSEC support on servers. |
+| REQUIRE_NOLOG     | true                  | Only using No-Logging server. |
+| REQUIRE_NOFILTER  | true                  | Only using none-filtering server. |
+| FALLBACK_RESOLVER | 1.1.1.1:53            | Setup fallback resolver. <br /> ex) \<ip-address\>:\<port\> |
+| LISTEN_ADDRESSES  | 0.0.0.0:53            | Setup listen-addresses. <br /> You can choose multiple addresses or port. <br /> ex) 0.0.0.0:53, 0.0.0.0:54, ... |
+| VERSION           | (None)                | You can choose DNSCrypt-Proxy version for **build process**. <br /> Value is tag or branch name of [DNSCrypt-Proxy](https://github.com/jedisct1/dnscrypt-proxy) repository. <br /> By default using master branch on none-value. ex) 2.0.14 |
 
->#### PROTO_DNSCRYPT ='TRUE/false'
->Enable DNSCRYPT protocol on true. 
-
->#### PROTO_DOH='TRUE/false'
->Enable DNS-over-HTTPS protocol on true.
-
->#### REQUIRE_DNSSEC='true/FALSE'
->Require DNSSEC support from servers.
-
->#### REQUIRE_NOLOG='TRUE/false'
->Require No-Logging option from servers.
-
->#### REQUIRE_NOFILTER='TRUE/false'
->Require No-Filtering option from servers.
-
->#### FALLBACK_RESOLVER=address:port(53)
->Set fallback dns-resolver address.
->ex) ~=1.1.1.1:53
-
->#### VERSION=''
->You can set version of DNSCrypt-proxy on build process by this variable.
->Version parameter is tag or branch name of [dnscrypt-proxy](https://github.com/jedisct1/dnscrypt-proxy) repository.
