@@ -9,7 +9,7 @@ RUN set -ex \
     && apk --update add git \
 
     # Clone dnscrypt-proxy repo
-    && git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src ; \
+    && git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src \
 
     # Set go env-variables.
     && export GOOS=${GOOS:-linux} \
@@ -17,8 +17,8 @@ RUN set -ex \
 
     # Build
     && cd src/dnscrypt-proxy \
-    && go clean ; \
-    && go build -ldflags="-s -w" -o /go/app/dnscrypt-proxy
+    && go clean \
+    && go build -ldflags="-s -w" -o /go/app/dnscrypt-proxy \
     && cp /go/src/dnscrypt-proxy/example-* /go/app
 
 # Smallest base image
@@ -56,7 +56,7 @@ RUN set -ex \
     && apk --no-cache --update add \
             tini \
             ca-certificates \
-    && chmod +x /app/dnscrypt-proxy
+    && chmod +x /app/dnscrypt-proxy \
     && chmod +x /entrypoint.sh
 
 WORKDIR /app
