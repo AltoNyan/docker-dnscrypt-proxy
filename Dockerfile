@@ -1,9 +1,30 @@
+# Using builder.
+FROM golang:alpine as builder
+
+ARG GOOS
+ARG GOARCH
+ARG VERSION
+
+RUN set -ex \
+    && apk --update add git \
+
+    # Clone dnscrypt-proxy repo
+    && git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src ; \
+
+    # Set go env-variables.
+    && export GOOS=${GOOS:-linux} \
+    && export GOARCH=${GOARCH:-amd64} \
+
+    # Build
+    && cd src/dnscrypt-proxy \
+    && go clean ; \
+    && go build -ldflags="-s -w" -o /go/app/dnscrypt-proxy
+    && cp /go/src/dnscrypt-proxy/example-* /go/app
+
 # Smallest base image
 FROM alpine:latest
 
 MAINTAINER Alto <alto@pendragon.kr>
-
-ARG VERSION
 
     # Select servers
 ENV SERVER_NAMES='cloudflare, google' \
@@ -21,53 +42,21 @@ ENV SERVER_NAMES='cloudflare, google' \
     FALLBACK_RESOLVER=1.1.1.1:53 \
 
     # Listen addresses
-    LISTEN_ADDRESSES=0.0.0.0:53\
+    LISTEN_ADDRESSES=0.0.0.0:53 \
 
     # Disable auto-regenerate config file on boot.
-    ENABLE_AUTO_CONFIG='true' \
-
-    # Default nothing to build latest version.
-    VERSION=${VERSION}
+    ENABLE_AUTO_CONFIG='true'
 
 COPY /rootfs /
+COPY --from=builder /go/app /app
 
 VOLUME /data
 
 RUN set -ex \
-    && apk --no-cache --no-progress --update upgrade \
-    && apk --no-cache --no-progress add tini ca-certificates\
-    && apk --no-cache --no-progress --virtual .build-deps add git go musl-dev \
-
-    # Create working dir from home.
-    && mkdir $HOME/dnscrypt-proxy \
-    && cd $HOME/dnscrypt-proxy \
-
-    # Clone dnscrypt-proxy repo
-    && git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src \
-
-    # Set environment variables
-    && export GOPATH=$PWD \
-    && export GOOS=linux \
-    && export GOARCH=amd64 \
-
-    # Build
-    && cd src/dnscrypt-proxy \
-    && go clean \
-    && go build -ldflags="-s -w" -o $GOPATH/dnscrypt-proxy \
-
-    # Set permission & Copy example-config
-    && cd $GOPATH \
-    && chmod +x dnscrypt-proxy \
-    && cp $GOPATH/src/dnscrypt-proxy/example-* $GOPATH \
-
-    # Clean src & build-dependencies
-    && rm -rf $GOPATH/src \
-    && apk del .build-deps \
-
-    # Move dnscrypt-proxy to /app
-    && mv $GOPATH /app \
-
-    # Set permission to entrypoint
+    && apk --no-cache --update add \
+            tini \
+            ca-certificates \
+    && chmod +x /app/dnscrypt-proxy
     && chmod +x /entrypoint.sh
 
 WORKDIR /app
