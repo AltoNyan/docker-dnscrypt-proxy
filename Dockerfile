@@ -1,25 +1,38 @@
 # Using builder.
 FROM golang:alpine as builder
 
-ARG GOOS
-ARG GOARCH
 ARG VERSION
 
-RUN set -ex \
-    && apk --update add git \
+    # Set go-lang env
+ARG GOOS=linux
+ARG GOARCH=amd64
+
+    # Option about UPX
+ARG ENABLE_UPX=true
+ARG UPX_COMP_RATIO=brute
+
+    # Install package
+RUN apk --no-cache --update add git upx
 
     # Clone dnscrypt-proxy repo
-    && git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src \
+RUN git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src
 
-    # Set go env-variables.
-    && export GOOS=${GOOS:-linux} \
-    && export GOARCH=${GOARCH:-amd64} \
+    # Set WORKDIR & Start build
+WORKDIR /go/src/dnscrypt-proxy
 
-    # Build
-    && cd src/dnscrypt-proxy \
+RUN set -ex \
     && go clean \
-    && go build -ldflags="-s -w" -o /go/app/dnscrypt-proxy \
-    && cp /go/src/dnscrypt-proxy/example-* /go/app
+    && go build -ldflags="-s -w" -o /app/dnscrypt-proxy \
+    && cp /go/src/dnscrypt-proxy/example-* /app
+
+    # Set WORKDIR
+WORKDIR /app
+
+    # Execute UPX if enabled.
+RUN set -ex ; \
+    if [[ $ENABLE_UPX == 'true' ]]; then \
+        upx ${UPX_COMP_RATIO:+--$UPX_COMP_RATIO} dnscrypt-proxy ;\
+    fi
 
 # Smallest base image
 FROM alpine:latest
@@ -48,7 +61,8 @@ ENV SERVER_NAMES='cloudflare, google' \
     ENABLE_AUTO_CONFIG='true'
 
 COPY /rootfs /
-COPY --from=builder /go/app /app
+
+COPY --from=builder /app /app
 
 VOLUME /data
 
