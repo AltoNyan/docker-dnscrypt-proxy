@@ -1,3 +1,39 @@
+# Using builder.
+FROM golang:alpine as builder
+
+ARG VERSION
+
+    # Set go-lang env
+ARG GOOS=linux
+ARG GOARCH=amd64
+
+    # Option about UPX
+ARG ENABLE_UPX=true
+ARG UPX_COMP_RATIO=brute
+
+    # Install package
+RUN apk --no-cache --update add git upx
+
+    # Clone dnscrypt-proxy repo
+RUN git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src
+
+    # Set WORKDIR & Start build
+WORKDIR /go/src/dnscrypt-proxy
+
+RUN set -ex \
+    && go clean \
+    && go build -ldflags="-s -w" -o /app/dnscrypt-proxy \
+    && cp /go/src/dnscrypt-proxy/example-* /app
+
+    # Set WORKDIR
+WORKDIR /app
+
+    # Execute UPX if enabled.
+RUN set -ex ; \
+    if [[ $ENABLE_UPX == 'true' ]]; then \
+        upx ${UPX_COMP_RATIO:+--$UPX_COMP_RATIO} dnscrypt-proxy ;\
+    fi
+
 # Smallest base image
 FROM alpine:latest
 
@@ -21,53 +57,25 @@ ENV SERVER_NAMES='cloudflare, google' \
     FALLBACK_RESOLVER=1.1.1.1:53 \
 
     # Listen addresses
-    LISTEN_ADDRESSES=0.0.0.0:53\
+    LISTEN_ADDRESSES=0.0.0.0:53 \
 
     # Disable auto-regenerate config file on boot.
     ENABLE_AUTO_CONFIG='true' \
 
-    # Default nothing to build latest version.
-    VERSION=${VERSION}
+    # Set version.
+    VERSION=${VERSION:-default}
 
 COPY /rootfs /
+
+COPY --from=builder /app /app
 
 VOLUME /data
 
 RUN set -ex \
-    && apk --no-cache --no-progress --update upgrade \
-    && apk --no-cache --no-progress add tini ca-certificates\
-    && apk --no-cache --no-progress --virtual .build-deps add git go musl-dev \
-
-    # Create working dir from home.
-    && mkdir $HOME/dnscrypt-proxy \
-    && cd $HOME/dnscrypt-proxy \
-
-    # Clone dnscrypt-proxy repo
-    && git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src \
-
-    # Set environment variables
-    && export GOPATH=$PWD \
-    && export GOOS=linux \
-    && export GOARCH=amd64 \
-
-    # Build
-    && cd src/dnscrypt-proxy \
-    && go clean \
-    && go build -ldflags="-s -w" -o $GOPATH/dnscrypt-proxy \
-
-    # Set permission & Copy example-config
-    && cd $GOPATH \
-    && chmod +x dnscrypt-proxy \
-    && cp $GOPATH/src/dnscrypt-proxy/example-* $GOPATH \
-
-    # Clean src & build-dependencies
-    && rm -rf $GOPATH/src \
-    && apk del .build-deps \
-
-    # Move dnscrypt-proxy to /app
-    && mv $GOPATH /app \
-
-    # Set permission to entrypoint
+    && apk --no-cache --update add \
+            tini \
+            ca-certificates \
+    && chmod +x /app/dnscrypt-proxy \
     && chmod +x /entrypoint.sh
 
 WORKDIR /app
