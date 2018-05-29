@@ -1,23 +1,26 @@
-# Using builder.
+# Multi-stage build
+# - use golang official image as builder.
 FROM golang:alpine as builder
 
+# Set version of dnscrypt-proxy.
+# without any value, using master branch as default.
 ARG VERSION
 
-    # Set go-lang env
+# Set go-lang env
 ARG GOOS=linux
 ARG GOARCH=amd64
 
-    # Option about UPX
+# Option about UPX
 ARG ENABLE_UPX=true
 ARG UPX_COMP_RATIO=brute
 
-    # Install package
+# Install package
 RUN apk --no-cache --update add git upx
 
-    # Clone dnscrypt-proxy repo
+# Clone dnscrypt-proxy repo
 RUN git clone -b ${VERSION:-master} https://github.com/jedisct1/dnscrypt-proxy src
 
-    # Set WORKDIR & Start build
+# Set WORKDIR & Start build
 WORKDIR /go/src/dnscrypt-proxy
 
 RUN set -ex \
@@ -25,13 +28,13 @@ RUN set -ex \
     && go build -ldflags="-s -w" -o /app/dnscrypt-proxy \
     && cp /go/src/dnscrypt-proxy/example-* /app
 
-    # Set WORKDIR
+# Set WORKDIR
 WORKDIR /app
 
-    # Execute UPX if enabled.
+# Execute UPX if enabled.
 RUN set -ex ; \
     if [[ $ENABLE_UPX == 'true' ]]; then \
-        upx ${UPX_COMP_RATIO:+--$UPX_COMP_RATIO} dnscrypt-proxy ;\
+        upx ${UPX_COMP_RATIO:+--$UPX_COMP_RATIO} dnscrypt-proxy ; \
     fi
 
 # Smallest base image
