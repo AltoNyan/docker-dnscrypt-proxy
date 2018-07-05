@@ -7,7 +7,7 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 >### Pull from docker-hub:
 >     docker run -d -p 0.0.0.0:53:53/udp \
 >                   -p 0.0.0.0:53:53/tcp \ 
->                   alotnyan/dnscrypt-proxy:latest
+>                   altonyan/dnscrypt-proxy:latest
 
 ### or
 
@@ -33,7 +33,7 @@ Simple, Light, Customizable dnscrypt-proxy docker container.
 >
 >                   ...
 >
->                   alotnyan/dnscrypt-proxy:latest
+>                   altonyan/dnscrypt-proxy:latest
 
 
 
